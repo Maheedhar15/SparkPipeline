@@ -1,13 +1,30 @@
+---
 resources:
-- name: work-dir
-  type: git
-  source:
-    uri: D:\Concourse Mock Pipeline
+  - name: repo
+    type: git
+    source:
+      uri: https://github.com/Maheedhar15/SparkPipeline
+      branch: master
 
 jobs:
 - name: run-makefile
   plan:
-  - get: work-dir
+  - get: repo
     trigger: true
   - task: run-make
-    file: run-make-task.yml
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: alpine
+      inputs:
+      - name: my-repo
+      run:
+        path: sh
+        args:
+        - -c
+        - |
+          cd my-repo
+          apk add --no-cache make
+          make spark-create-change
