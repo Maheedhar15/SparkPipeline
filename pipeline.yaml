@@ -6,25 +6,39 @@ resources:
       uri: https://github.com/Maheedhar15/SparkPipeline
       branch: master
 
+dind: &dind
+  type: docker-image
+  source:
+    repository: karlkfi/concourse-dcind
+
+
 jobs:
 - name: run-makefile
   plan:
   - get: repo
     trigger: true
   - task: run-make
+    privileged: true
     config:
       platform: linux
-      image_resource:
-        type: docker-image
-        source:
-          repository: alpine
+      image_resource: *dind
       inputs:
-      - name: my-repo
+      - name: repo
+      
       run:
-        path: sh
+        path: entrypoint.sh
         args:
-        - -c
+        - bash
+        - -ceux
         - |
-          cd my-repo
+          dockerd-entrypoint.sh &
+          sleep 20
+          apk add --no-cache curl
+          curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          docker-compose --version
+          cd repo
           apk add --no-cache make
           make spark-create-change
+      params:
+        TEST_SLACK: https://hooks.slack.com/services/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
+      
