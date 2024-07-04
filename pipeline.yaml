@@ -1,10 +1,21 @@
 ---
+resource_types:
+  - name: slack-notification
+    type: docker-image
+    source:
+      repository: cfcommunity/slack-notification-resource
+      tag: latest
+
 resources:
   - name: repo
     type: git
     source:
       uri: https://github.com/Maheedhar15/SparkPipeline
       branch: master
+  - name: slack-alert
+    type: slack-notification
+    source:
+      url: https://hooks.slack.com/services/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
 
 dind: &dind
   type: docker-image
@@ -31,12 +42,14 @@ jobs:
         - bash
         - -ceux
         - |
+          ulimit -u unlimited
           apk add --no-cache curl
           curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
           docker-compose --version
           cd repo
           apk add --no-cache make
           make spark-create-change
+    on_failure:
+      put: slack-alert
       params:
-        TEST_SLACK: https://hooks.slack.com/services/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
-      
+        text: 'Change Request failed for Prod Pipeline'
