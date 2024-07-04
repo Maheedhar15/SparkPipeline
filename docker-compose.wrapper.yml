@@ -2,10 +2,15 @@ version: '3'
 
 services:
   go-spark-change:
-    image: golang:1.17
+    image: golang:1.22.0
     container_name: go-create-change
     environment:
       - TEST_SLACK=${TEST_SLACK}
     volumes:
-      - ./:/src
-    command: ["go", "run", "createSpark.go"]
+      - ${PWD}:/src
+    working_dir: /src
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        go run createSpark.go
