@@ -39,7 +39,7 @@ func createChangeReq() string {
 
 func sendSlackNotification(message string) error {
 	slackBody, _ := json.Marshal(payload{Text: message})
-	req, err := http.NewRequest(http.MethodPost, "https://hooks.slack.com/services/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", bytes.NewBuffer(slackBody))
+	req, err := http.NewRequest(http.MethodPost, os.Getenv("TEST_SLACK"), bytes.NewBuffer(slackBody))
 	if err != nil {
 		return err
 	}
