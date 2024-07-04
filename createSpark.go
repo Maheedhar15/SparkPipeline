@@ -23,7 +23,7 @@ func createChangeReq() string {
 	//fmt.Println("Response Body:", string(body))
 	response_data := string(body)
 	if strings.Contains(response_data, "error") || strings.Contains(response_data, "fatal") {
-		message := fmt.Sprintf("Change creation failure occured in prod pipeline. Here are the details: \n \n \n Build ID: %s\n Build Pipeline Name: %s\n Build Job name: %s\n, Build Name: %s\n\n Response : %s", os.Getenv("BUILD_ID"), os.Getenv("BUILD_PIPELINE_NAME"), os.Getenv("BUILD_JOB_NAME"), os.Getenv("BUILD_NAME"), response_data)
+		message := fmt.Sprintf("Change creation failure occured in prod pipeline. Here are the details: \n \n \n Build ID: %s\n Build Pipeline Name: %s\n Build Job name: %s\n Build Name: %s\n\n Response : %s", os.Getenv("BUILD_ID"), os.Getenv("BUILD_PIPELINE_NAME"), os.Getenv("BUILD_JOB_NAME"), os.Getenv("BUILD_NAME"), response_data)
 		err := sendSlackNotification(message)
 		if err != nil {
 			fmt.Printf("Error sending slack notification: %s\n", err)
@@ -39,7 +39,7 @@ func createChangeReq() string {
 
 func sendSlackNotification(message string) error {
 	slackBody, _ := json.Marshal(payload{Text: message})
-	req, err := http.NewRequest(http.MethodPost, os.Getenv("TEST_SLACK"), bytes.NewBuffer(slackBody))
+	req, err := http.NewRequest(http.MethodPost, "https://hooks.slack.com/services/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", bytes.NewBuffer(slackBody))
 	if err != nil {
 		return err
 	}
