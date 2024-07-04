@@ -6,4 +6,6 @@ services:
     container_name: go-create-change
     environment:
       - TEST_SLACK=${TEST_SLACK}
+    volumes:
+      - ./:/src
     command: ["go", "run", "createSpark.go"]
