@@ -1,0 +1,27 @@
+---
+platform: linux
+image_resource:
+  type: docker-image
+  source:
+    repository: alpine
+
+inputs:
+  - name: work-dir
+
+run:
+  path: sh
+  args:
+    - -c
+    - |
+      cd work-dir
+      apk add --no-cache make
+      make spark-create-change
+
+params:
+  MAKEFILE_CONTENT: |  
+    spark-create-change:
+    	@echo "==============Submitting change request"
+      touch .env
+      TEST_SLACK=${TEST_SLACK	} 
+      docker-compose -f 'docker-compose.wrapper.yml' run --rm go-spark-change >> change-req-output.txt
+      cat change-req-output.txt

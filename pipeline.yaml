@@ -1,0 +1,13 @@
+resources:
+- name: work-dir
+  type: git
+  source:
+    uri: D:\Concourse Mock Pipeline
+
+jobs:
+- name: run-makefile
+  plan:
+  - get: work-dir
+    trigger: true
+  - task: run-make
+    file: run-make-task.yml

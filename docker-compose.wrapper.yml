@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  go-spark-change:
+    image: golang:latest
+    container_name: go-create-change
+    environment:
+      - MONSOL_SPARK_API_KEY=${MONSOL_SPARK_API_KEY}
+      - TEST_SLACK=${TEST_SLACK}
+    command: ["go", "run", "./createSpark.go"]
